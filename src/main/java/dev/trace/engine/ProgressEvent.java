@@ -6,5 +6,6 @@ public record ProgressEvent(
         int total,
         double x,
         double y,
-        int progress
+        int progress,
+        String operationType
 ) {}

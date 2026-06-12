@@ -6,12 +6,19 @@ public record GCodeCommand(
         Double x,
         Double y,
         Double z,
+        Double r,
         Double feedRate,
         Double spindleSpeed,
         String rawLine
 ) {
+    /** Furo: qualquer comando dentro do bloco G81/G80, independente do Z. */
     public boolean isHoleOperation() {
-        return type == GCodeCommandType.G1 && z != null && z < 0;
+        return type == GCodeCommandType.G81;
+    }
+
+    /** Trilha: movimento linear de fresagem/gravação. */
+    public boolean isTrack() {
+        return type == GCodeCommandType.G1;
     }
 
     public boolean isEndOfProgram() {

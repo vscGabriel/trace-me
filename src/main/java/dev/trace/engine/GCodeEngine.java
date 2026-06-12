@@ -3,6 +3,7 @@ package dev.trace.engine;
 import dev.trace.machine.MachineState;
 import dev.trace.machine.MachineStateException;
 import dev.trace.parser.GCodeCommand;
+import dev.trace.parser.GCodeCommandType;
 import dev.trace.parser.GCodeParser;
 
 import java.util.List;
@@ -116,13 +117,25 @@ public class GCodeEngine {
 
         config.commandSender().send(executeJson);
 
+        String operationType;
+        if (command.isHoleOperation()) {
+            operationType = "DRILL";
+        } else if (command.isTrack()) {
+            operationType = "TRACE";
+        } else if (command.type() == GCodeCommandType.G0) {
+            operationType = "RAPID";
+        } else {
+            operationType = "UNKNOWN";
+        }
+
         config.progressListener().onProgress(new ProgressEvent(
                 command.lineNumber(),
                 currentHole.get(),
                 totalHoles.get(),
                 command.x() != null ? command.x() : 0.0,
                 command.y() != null ? command.y() : 0.0,
-                progressPct
+                progressPct,
+                operationType
         ));
 
         if (command.isHoleOperation()) {
